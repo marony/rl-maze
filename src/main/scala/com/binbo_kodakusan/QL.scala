@@ -11,9 +11,11 @@ case class QL(width: Int, height: Int) {
   // 割引率
   val Gamma = 0.5
   // e-greedy法
-  val Epsilon = 0.3
+  val Epsilon = 0.1
   // ゴールの報酬
   val GoalReward = 100.0
+  // 壁だった時の報酬
+  val Panishment = -1.0
 
   val rand: Random = new Random()
 
@@ -43,19 +45,35 @@ case class QL(width: Int, height: Int) {
     * @param player
     */
   def measureAction(maze: Maze, player: Player): Direction = {
-    val r = rand.nextDouble()
-    if (r < Epsilon) {
-      // ランダムに選択する
-      var dir = Direction.fromInt(rand.nextInt(4))
-      while (!player.movable(maze, dir)) {
-        dir = Direction.fromInt(rand.nextInt(4))
+    def selectDir(): Direction = {
+      val r = rand.nextDouble()
+      if (r < Epsilon) {
+        // ランダムに選択する
+        Direction.fromInt(rand.nextInt(4))
+      } else {
+        // 大きなQ値の方策を選択する
+        val max = (0 until 4).map(Direction.fromInt(_))
+          .maxBy(dir => getQValue(player.px, player.py, dir))
+        val min = (0 until 4).map(Direction.fromInt(_))
+          .minBy(dir => getQValue(player.px, player.py, dir))
+        if (min == max) {
+          // 全部同じ場合もやっぱりランダムに選択する
+          Direction.fromInt(rand.nextInt(4))
+        } else {
+          max
+        }
       }
-      dir
-    } else {
-      // 大きなQ値の方策を選択する
-      (0 until 4).map(Direction.fromInt(_))
-        .filter(player.movable(maze, _))
-        .maxBy(dir => getQValue(player.px, player.py, dir))
     }
+
+    var dir = selectDir()
+    while (!player.movable(maze, dir)) {
+      // 壁なので罰を与えて再チャレンジ
+      var qs = getQValue(player.px, player.py, dir)
+      qs += Alpha * Panishment
+      setQValue(player.px, player.py, dir, qs)
+      dir = selectDir()
+    }
+
+    dir
   }
 }

@@ -1,12 +1,15 @@
 package com.binbo_kodakusan
 
 import java.awt.BasicStroke
-import java.awt.{ Color => AWTColor }
-import scala.swing.{Dimension, Graphics2D}
+import java.awt.{Color => AWTColor}
 
+import scala.swing.{Dimension, Font, Graphics2D}
 import Const._
 
 object View {
+
+  private val FontSize = 16
+
   private def drawBoard(g: Graphics2D, maze: Maze, ql: QL): Unit = {
     // 背景
     g.setColor(AWTColor.BLACK)
@@ -14,7 +17,7 @@ object View {
 
     // Q値の最大と最小を取って、0〜255に慣らす
     val max = ql.qvalue.map(_.max).max
-    val min = ql.qvalue.map(_.min).min
+    val min = 0 //ql.qvalue.map(_.min).min
     // 盤面
     for (y <- 0 until MazeWidth) {
       for (x <- 0 until MazeHeight) {
@@ -24,12 +27,31 @@ object View {
         val x2 = (x + 1) * PieceSize
         val y2 = (y + 1) * PieceSize
 
-        // Q値で塗り潰し
+        // 最大Q値で塗り潰し
         // 0〜225にする
-        val c = ((ql.getMaxQValue(x, y) - min) * 256 / max).toInt
-        val color = new AWTColor(c / 2, 0, 0)
-        g.setColor(color)
-        g.fillRect(x1 + 6, y1 + 6, PieceSize - 10, PieceSize - 10)
+        {
+          val q = ql.getMaxQValue(x, y)
+          var c = if (q < 0) 0 else ((q - min) * 256 / (max - min)).toInt
+          c = if (c < 0) 0 else if (c > 255) 255 else c
+          val color = new AWTColor(c / 2, 0, 0)
+          g.setColor(color)
+          g.fillRect(x1 + 6, y1 + 6, PieceSize - 10, PieceSize - 10)
+        }
+        // 数値
+        {
+          val BaseSize = FontSize / 2
+          val qs = ql.getQValue(x, y)
+          g.setColor(AWTColor.WHITE)
+          g.setFont(new Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, FontSize))
+          // 左
+          g.drawString(qs(0).toInt.toString, x1, y1 + PieceSize / 2 + BaseSize)
+          // 上
+          g.drawString(qs(1).toInt.toString, x1 + PieceSize / 2 - BaseSize, y1 + FontSize)
+          // 右
+          g.drawString(qs(2).toInt.toString, x2 - BaseSize * 2, y1 + PieceSize / 2 + BaseSize)
+          // 下
+          g.drawString(qs(3).toInt.toString, x1 + PieceSize / 2 - BaseSize, y2)
+        }
       }
     }
 

@@ -111,7 +111,7 @@ case class Maze(width: Int, height: Int) {
       // 壁をチェックする
       val p = getPiece(x, y)
       // 移動可能か
-      if (p.isWall(dir)) {
+      if (p.isWall(dir2)) {
         // 移動できない(壁)
         (0, 0, Direction.None)
       } else {
@@ -191,7 +191,7 @@ case class Maze(width: Int, height: Int) {
         if (y < height) {
           // 一番下じゃないのでひとつ下のマスの上の壁も更新
           val p2 = getPiece(x, y + 1)
-          setPiece(x, y + 1, MazePiece(p2.west, wall, p2.east, p1.south))
+          setPiece(x, y + 1, MazePiece(p2.west, wall, p2.east, p2.south))
         }
       case _ => ???
     }
