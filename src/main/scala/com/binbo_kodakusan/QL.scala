@@ -11,7 +11,7 @@ case class QL(width: Int, height: Int) {
   // 割引率
   val Gamma = 0.5
   // e-greedy法
-  val Epsilon = 0.1
+  val Epsilon = 0.3
   // ゴールの報酬
   val GoalReward = 100.0
 

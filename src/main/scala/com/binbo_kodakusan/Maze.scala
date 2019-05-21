@@ -59,6 +59,7 @@ case class Maze(width: Int, height: Int) {
   }
 
   val rand = new Random
+  construct()
 
   private[this] def getWallIndex(x: Int, y: Int): Int = {
     (height + 1) * y + x
@@ -70,7 +71,7 @@ case class Maze(width: Int, height: Int) {
   /**
     * 迷路を作成する
     */
-  def construct(): Unit = {
+  private def construct(): Unit = {
     val cluster = (1 to width * height).toArray
     while (cluster.exists(n => n != cluster(0))) {
       val x = rand.nextInt(width)
