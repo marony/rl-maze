@@ -64,6 +64,11 @@ object MainApp extends SimpleSwingApplication {
       contents += label
       contents += mainPanel
     }
+
+    override def closeOperation(): Unit = {
+      shutdown()
+      System.exit(0)
+    }
   }
   top.pack()
 
@@ -74,7 +79,7 @@ object MainApp extends SimpleSwingApplication {
 //  }, 100, 1)
   var step = 0
   val t = new Thread(() => {
-    Thread.sleep(1000 * 10)
+//    Thread.sleep(1000 * 10)
     while (true) {
       if (step < 5000) {
         for (i <- 1 to 100) {
@@ -89,6 +94,7 @@ object MainApp extends SimpleSwingApplication {
 //      Thread.`yield`()
     }
   })
+  t.setDaemon(true)
   t.start()
 
   override def shutdown(): Unit = {
