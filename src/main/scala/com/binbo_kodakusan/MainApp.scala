@@ -81,7 +81,7 @@ object MainApp extends SimpleSwingApplication {
   var goals = 0
   var learning = true
   val t = new Thread(() => {
-//    Thread.sleep(1000 * 10)
+    Thread.sleep(1000 * 10)
     while (true) {
       if (step < 5000) {
         for (i <- 1 to 100) {
