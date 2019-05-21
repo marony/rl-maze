@@ -14,15 +14,15 @@ case class Learning(maze: Maze, player: Player, ql: QL) {
     if (maze.Goal == (player.px, player.py)) {
       // ゴールした
       // Q値を更新する(ゴール報酬)
-      //      val newQValue = (1.0d - ql.Alpha) * nowQValue + ql.Alpha * ql.GoalReward
-      val newQValue =   nowQValue + ql.Alpha * ql.GoalReward
+      val newQValue = (1.0d - ql.Alpha) * nowQValue + ql.Alpha * ql.GoalReward
+//      val newQValue =   nowQValue + ql.Alpha * ql.GoalReward
       ql.setQValue(oldX, oldY, dir, newQValue)
       player.reset()
       step = 0
     } else {
       // Q値を更新する(次のQ値との差分)
-//      val newQValue = (1.0d - ql.Alpha) * nowQValue + ql.Alpha * (ql.Gamma * (nextQValue - nowQValue))
-      val newQValue = nowQValue + ql.Alpha * (ql.Gamma * nextQValue - nowQValue)
+      val newQValue = (1.0d - ql.Alpha) * nowQValue + ql.Alpha * (ql.Gamma * (nextQValue - nowQValue))
+//      val newQValue = nowQValue + ql.Alpha * (ql.Gamma * nextQValue - nowQValue)
 //      println(s"($oldX, $oldY)->(${player.px}, ${player.py}), newValue = $newQValue, nowValue = $nowQValue, newQValue = $newQValue")
 //      println(s"1 = ${(1.0d - ql.Alpha)}, 2 = ${(nextQValue - nowQValue)}, 3 = ${ql.Gamma * (nextQValue - nowQValue)}, 4 = ${ql.Alpha * (ql.Gamma * (nextQValue - nowQValue))}")
       ql.setQValue(oldX, oldY, dir, newQValue)

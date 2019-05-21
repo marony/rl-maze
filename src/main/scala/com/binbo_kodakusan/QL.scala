@@ -7,7 +7,7 @@ case class QL(width: Int, height: Int) {
   val InitMaxQl = 50d
 
   // 学習係数
-  val Alpha = 0.1
+  val Alpha = 0.2
   // 割引率
   val Gamma = 0.5
   // e-greedy法
@@ -15,7 +15,7 @@ case class QL(width: Int, height: Int) {
   // ゴールの報酬
   val GoalReward = 100.0
   // 壁だった時の報酬
-  val Panishment = -1.0
+  val Panishment = -10.0
 
   val rand: Random = new Random()
 

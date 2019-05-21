@@ -16,8 +16,9 @@ object View {
     g.fillRect(0, 0, maze.width * PieceSize, maze.height * PieceSize)
 
     // Q値の最大と最小を取って、0〜255に慣らす
-    val max = ql.qvalue.map(_.max).max
-    val min = 0 //ql.qvalue.map(_.min).min
+    val sorted1 = ql.qvalue.flatten.distinct.sorted.reverse.take(192)
+    val sorted2 = ql.qvalue.flatten.distinct.sorted.take(64).reverse
+    val sorted = sorted1 ++ sorted2
     // 盤面
     for (y <- 0 until MazeWidth) {
       for (x <- 0 until MazeHeight) {
@@ -31,7 +32,7 @@ object View {
         // 0〜225にする
         {
           val q = ql.getMaxQValue(x, y)
-          var c = if (q < 0) 0 else ((q - min) * 256 / (max - min)).toInt
+          var c = sorted.dropWhile(n => n > q).length
           c = if (c < 0) 0 else if (c > 255) 255 else c
           val color = new AWTColor(c / 2, 0, 0)
           g.setColor(color)

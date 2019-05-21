@@ -72,13 +72,20 @@ object MainApp extends SimpleSwingApplication {
 //  timer.scheduleAtFixedRate(new java.util.TimerTask {
 //    override def run(): Unit = learn.oneStep()
 //  }, 100, 1)
+  var step = 0
   val t = new Thread(() => {
-    Thread.sleep(1000 * 30)
+    Thread.sleep(1000 * 10)
     while (true) {
-      for (i <- 1 to 1) {
+      if (step < 5000) {
+        for (i <- 1 to 100) {
+          learn.oneStep()
+        }
+        Thread.sleep(1)
+      } else {
         learn.oneStep()
+        Thread.sleep(100)
       }
-      Thread.sleep(1)
+      step += 1
 //      Thread.`yield`()
     }
   })
