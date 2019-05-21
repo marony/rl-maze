@@ -44,10 +44,10 @@ case class QL(width: Int, height: Int) {
     * @param maze
     * @param player
     */
-  def measureAction(maze: Maze, player: Player): Direction = {
+  def measureAction(maze: Maze, player: Player, learning: Boolean): Direction = {
     def selectDir(): Direction = {
       val r = rand.nextDouble()
-      if (r < Epsilon) {
+      if (learning && r < Epsilon) {
         // ランダムに選択する
         Direction.fromInt(rand.nextInt(4))
       } else {

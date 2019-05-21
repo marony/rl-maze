@@ -10,7 +10,7 @@ object View {
 
   private val FontSize = 16
 
-  private def drawBoard(g: Graphics2D, maze: Maze, ql: QL): Unit = {
+  private def drawBoard(g: Graphics2D, maze: Maze, ql: QL, learning: Boolean, goals: Int): Unit = {
     // 背景
     g.setColor(AWTColor.BLACK)
     g.fillRect(0, 0, maze.width * PieceSize, maze.height * PieceSize)
@@ -71,6 +71,12 @@ object View {
           g.drawString(qs(2).toInt.toString, x2 - BaseSize * 2, y1 + PieceSize / 2 + BaseSize)
           // 下
           g.drawString(qs(3).toInt.toString, x1 + PieceSize / 2 - BaseSize, y2)
+        }
+        // 学習中
+        if (learning) {
+          g.setColor(AWTColor.RED)
+          g.setFont(new Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 72))
+          g.drawString(s"$goals, Learning", PieceSize * maze.width / 4, PieceSize * maze.height / 2)
         }
       }
     }
@@ -133,8 +139,8 @@ object View {
     }
   }
 
-  def draw(g: Graphics2D, maze: Maze, player: Player, ql: QL): Unit = {
-    drawBoard(g, maze, ql)
+  def draw(g: Graphics2D, maze: Maze, player: Player, ql: QL, learning: Boolean, goals: Int): Unit = {
+    drawBoard(g, maze, ql, learning, goals)
     drawGoal(g, maze)
     drawPlayer(g, maze, player)
   }

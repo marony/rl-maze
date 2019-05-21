@@ -17,7 +17,7 @@ object MainApp extends SimpleSwingApplication {
   val learn = Learning(maze, player, ql)
 
   def onPaint(g: Graphics2D, size: Dimension): Unit = {
-    View.draw(g, maze, player, ql)
+    View.draw(g, maze, player, ql, learning, goals)
   }
 
   // 表示用ラベル
@@ -78,16 +78,21 @@ object MainApp extends SimpleSwingApplication {
 //    override def run(): Unit = learn.oneStep()
 //  }, 100, 1)
   var step = 0
+  var goals = 0
+  var learning = true
   val t = new Thread(() => {
 //    Thread.sleep(1000 * 10)
     while (true) {
       if (step < 5000) {
         for (i <- 1 to 100) {
-          learn.oneStep()
+          if (learn.oneStep(learning, goals)) {
+            goals += 1
+          }
         }
         Thread.sleep(1)
       } else {
-        learn.oneStep()
+        learning = false
+        learn.oneStep(learning, goals)
         Thread.sleep(100)
       }
       step += 1
