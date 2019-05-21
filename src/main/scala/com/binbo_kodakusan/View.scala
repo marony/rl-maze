@@ -15,10 +15,6 @@ object View {
     g.setColor(AWTColor.BLACK)
     g.fillRect(0, 0, maze.width * PieceSize, maze.height * PieceSize)
 
-    // Q値の最大と最小を取って、0〜255に慣らす
-    val sorted1 = ql.qvalue.flatten.distinct.sorted.reverse.take(192)
-    val sorted2 = ql.qvalue.flatten.distinct.sorted.take(64).reverse
-    val sorted = sorted1 ++ sorted2
     // 盤面
     for (y <- 0 until MazeWidth) {
       for (x <- 0 until MazeHeight) {
@@ -31,18 +27,41 @@ object View {
         // 最大Q値で塗り潰し
         // 0〜225にする
         {
-          val q = ql.getMaxQValue(x, y)
-          var c = sorted.dropWhile(n => n > q).length
-          c = if (c < 0) 0 else if (c > 255) 255 else c
-          val color = new AWTColor(c / 2, 0, 0)
-          g.setColor(color)
-          g.fillRect(x1 + 6, y1 + 6, PieceSize - 10, PieceSize - 10)
+          val qs = ql.getQValue(x, y).zipWithIndex.sortBy{case (q, i) => q}.reverse;
+          {
+            // 左
+            val i = qs.dropWhile{case (q, i) => i != 0}.length - 1
+            val c = 48 * i
+            g.setColor(new AWTColor(0, c, 0))
+            g.fillRect(x1, y1 + 6, 10, PieceSize - 10)
+          }
+          {
+            // 上
+            val i = qs.dropWhile{case (q, i) => i != 1}.length - 1
+            val c = 48 * i
+            g.setColor(new AWTColor(0, c, 0))
+            g.fillRect(x1 + 6, y1, PieceSize - 10, 10)
+          }
+          {
+            // 右
+            val i = qs.dropWhile{case (q, i) => i != 2}.length - 1
+            val c = 48 * i
+            g.setColor(new AWTColor(0, c, 0))
+            g.fillRect(x2 - 10, y1 + 6, 10, PieceSize - 10)
+          }
+          {
+            // 下
+            val i = qs.dropWhile{case (q, i) => i != 3}.length - 1
+            val c = 48 * i
+            g.setColor(new AWTColor(0, c, 0))
+            g.fillRect(x1 + 6, y2 - 6, PieceSize - 10, 10)
+          }
         }
         // 数値
         {
           val BaseSize = FontSize / 2
           val qs = ql.getQValue(x, y)
-          g.setColor(AWTColor.WHITE)
+          g.setColor(AWTColor.DARK_GRAY)
           g.setFont(new Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, FontSize))
           // 左
           g.drawString(qs(0).toInt.toString, x1, y1 + PieceSize / 2 + BaseSize)
@@ -58,7 +77,7 @@ object View {
 
     // 線
     g.setColor(AWTColor.WHITE)
-    g.setStroke(new BasicStroke(1f))
+    g.setStroke(new BasicStroke(3f))
     for (y <- 0 until MazeWidth + 1) {
       for (x <- 0 until MazeHeight + 1) {
 
